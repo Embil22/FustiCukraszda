@@ -1,0 +1,490 @@
+        /* --- ALAP BEÁLLÍTÁSOK --- */
+        :root {
+            --primary: #b25a46; /* meleg terrakotta accent */
+            --secondary: #fff8ef; /* krémszín háttér */
+            --dark: #3b2a24; /* mély barna */
+            --text: #2b2623; /* fő szöveg */
+            --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        @font-face {
+            font-family: ballentines;
+            src: url(/Frontend/public/BallentinesRegular/Ballantines\ Regular.ttf)
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--secondary);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- NAVIGÁCIÓ --- */
+        header {
+            background-color: var(--secondary);
+            color: var(--dark);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            color: var(--dark);
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            font-style: italic;
+
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-contact {
+            margin-left: auto;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--dark);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 10px 14px;
+            border-radius: 999px;
+            transition: all 0.3s ease;
+            font-family: var(--font-main);
+        }
+
+        .nav-btn:hover,
+        .nav-btn.active {
+            background: rgba(178, 90, 70, 0.08);
+            text-decoration: none;
+        }
+
+        /* --- HERO SZEKCIÓ --- */
+        .hero {
+            position: relative;
+            background: url('https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/689010508_1551757416949933_6907001789172830124_n.jpg?stp=cp6_dst-jpg_tt6&cstp=mx2048x1536&ctp=s2048x1536&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=hLYWs5sqDl8Q7kNvwF8fc3Q&_nc_oc=AdqI7HL3k1hz70_mUOYzJ3jWrQ_QnXG2kueLnhtWgBQZG2soogOLaJJCFM26zudJObk&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&_nc_gid=89SogJaFIBb3HN_3NlU14w&_nc_ss=7b2a8&oh=00_AQIm093T8SfSlhWhDhrmAMRUwmafXbE15FgumKaB8Y1xqw&oe=6AB030BD') center/cover no-repeat;
+            min-height: 70vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(59,42,36,0.18), rgba(59,42,36,0.42));
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero h1 {
+            position: relative;
+            z-index: 1;
+            font-size: 3.6rem;
+            margin-bottom: 12px;
+            text-shadow: 0 8px 24px rgba(0,0,0,0.45);
+            font-family: 'ballentines', serif;
+            letter-spacing: 1px;
+            opacity: 0;
+            transform: translateY(6px);
+            animation: heroFadeIn 700ms ease forwards 120ms;
+        }
+
+        .hero p {
+            position: relative;
+            z-index: 1;
+            font-size: 1.15rem;
+            max-width: 720px;
+            color: #fff9f9;
+            opacity: 0;
+            transform: translateY(6px);
+            animation: heroFadeIn 700ms ease forwards 260ms;
+        }
+
+        .hero-actions {
+            position: relative;
+            z-index: 1;
+            margin-top: 18px;
+            opacity: 0;
+            transform: translateY(8px);
+            animation: heroFadeIn 700ms ease forwards 380ms;
+        }
+
+        .hero-cta {
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.15);
+            padding: 12px 22px;
+            border-radius: 999px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(0,0,0,0.25); }
+
+        @keyframes heroFadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ÁLTALÁNOS SZEKCIÓ STÍLUSOK --- */
+        section {
+            padding: 60px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Page transition helpers */
+        .page-section {
+            display: none; /* hidden by default; JS will manage display during animations */
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* enter/exit animation classes applied by JS */
+        .page-section.anim-in {
+            animation: fadeIn 360ms ease-in-out forwards;
+        }
+
+        .page-section.anim-out {
+            animation: fadeOut 240ms ease-in-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(8px); }
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--primary);
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background-color: var(--dark);
+            margin: 10px auto 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .menu-layout {
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr;
+            gap: 30px;
+            align-items: start;
+            margin-top: 40px;
+        }
+
+        .menu-board,
+        .facebook-panel {
+            background: #fffaf8;
+            border: 3px solid rgba(178, 90, 70, 0.28);
+            border-radius: 22px;
+            box-shadow: 0 12px 28px rgba(74, 44, 42, 0.08);
+            overflow: hidden;
+        }
+
+        .menu-board {
+            padding: 28px 30px 18px;
+        }
+
+        .menu-footer {
+            text-align: center;
+            padding: 18px 12px 26px;
+        }
+
+        .menu-cta {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 999px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .menu-cta:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(178,90,70,0.12); }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 24px;
+            border-bottom: 2px dashed rgba(59, 42, 36, 0.12);
+            padding-bottom: 16px;
+        }
+
+        .menu-header h3 {
+            font-family: 'ballentines', serif;
+            font-size: 2.8rem;
+            color: var(--dark);
+            letter-spacing: 1px;
+        }
+
+        .menu-header p {
+            color: var(--dark);
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 0.72rem;
+        }
+
+        .menu-category {
+            margin-bottom: 26px;
+        }
+
+        .menu-category h4 {
+            background: linear-gradient(135deg, #b25a46, #8b3f2f);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            letter-spacing: 0.04em;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 18px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(59, 42, 36, 0.06);
+        }
+
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .menu-item strong {
+            color: var(--dark);
+            font-size: 1rem;
+        }
+
+        .menu-item span {
+            color: var(--primary);
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .facebook-panel {
+            padding: 18px 16px 12px;
+        }
+
+        .facebook-panel-header {
+            text-align: center;
+            margin-bottom: 12px;
+            color: var(--dark);
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .facebook-embed {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            border: 1px solid rgba(74, 44, 42, 0.08);
+        }
+
+        .facebook-embed iframe {
+            display: block;
+            width: 100%;
+            min-height: 720px;
+            border: none;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+            border-top: 4px solid var(--primary);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: var(--dark);
+            margin-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .card p {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .price {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.1rem;
+            display: block;
+            margin-top: 10px;
+        }
+
+        /* --- BEMUTATKOZÁS & ALAPÍTÓK --- */
+        .intro-text {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 40px;
+            font-size: 1.1rem;
+        }
+
+        .founders {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .founder-card {
+            text-align: center;
+            max-width: 250px;
+        }
+
+        .founder-img {
+            width: 150px;
+            height: 150px;
+            background-color: var(--secondary);
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+        }
+
+        /* --- NYITVATARTÁS & KAPCSOLAT --- */
+        .info-box {
+            background: var(--secondary);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .info-box ul li {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 420px;
+            gap: 24px;
+        }
+
+        .map-panel {
+            background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.03));
+            border-radius: 12px;
+            overflow: hidden;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(59,42,36,0.06);
+        }
+
+        .contact-card {
+            background: white;
+            padding: 26px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(59,42,36,0.06);
+            border: 1px solid rgba(59,42,36,0.06);
+        }
+
+        .contact-card h3 { color: var(--dark); margin-bottom: 12px; }
+
+        .contact-list li { margin-bottom: 10px; color: var(--text); }
+
+        .contact-cta {
+            display: inline-block;
+            margin-top: 12px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .contact-grid { grid-template-columns: 1fr; }
+            .nav-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .logo { font-size: 2.5rem; }
+            .hero h1 { font-size: 2rem; }
+            .menu-layout {
+                grid-template-columns: 1fr;
+            }
+            .facebook-embed iframe {
+                min-height: 620px;
+            }
+        }
+
+        /* --- LÁBLÉC --- */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
