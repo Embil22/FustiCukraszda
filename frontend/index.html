@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Füsti Cukrászda</title>
+    <link rel="stylesheet" href="/FustiCukraszda/Backend/style.css">
+</head>
+<body>
+
+    <!-- NAVIGÁCIÓ -->
+    <header>
+        <div class="nav-container">
+            <div class="logo">Füsti Cukrászda</div>
+            <nav class="nav-links" aria-label="Fő navigáció">
+                <button class="nav-btn active" type="button" data-target="home">Főoldal</button>
+                <button class="nav-btn" type="button" data-target="products">Termékeink</button>
+                <button class="nav-btn" type="button" data-target="about">Bemutatkozás</button>
+                <button class="nav-btn nav-contact" type="button" data-target="contact">Kapcsolat</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- FŐOLDAL -->
+        <section id="home" class="page-section active">
+            <div class="hero">
+                <div class="hero-overlay" aria-hidden="true"></div>
+                <h1>Füsti Cukrászda</h1>
+                <p>Hagyomány és minőség egy helyen. Kézműves sütemények, torták és fagylaltok szeretettel.</p>
+            </div>
+
+            <div class="menu-layout">
+                <div class="menu-board">
+                    <div class="menu-header">
+                        <h3>Amit kínálunk</h3>
+                    </div>
+
+                    <div class="menu-category">
+                        <h4>Torták</h4>
+                        <div class="menu-item"><strong>Bajor (7 szelet) </strong><span>6000 Ft</span></div>
+                        <div class="menu-item"><strong>Zsúr (10 szelet) </strong><span>9000 Ft</span></div>
+                        <div class="menu-item"><strong>Normál (16 szelet) </strong><span>13600 Ft</span></div>
+                        <div class="menu-item"><strong>Malom (24 szelet) </strong><span>20400 Ft</span></div>
+                        <div class="menu-item"><strong>Tortadoboz</strong><span>500 Ft</span></div>
+                    </div>
+
+                    <div class="menu-category">
+                        <h4>Fagylalt</h4>
+                        <div class="menu-item"><strong>Fagylalt gombóc (Normál adag)</strong><span>550 Ft</span></div>
+                        <div class="menu-item"><strong>Fagylalt gombóc (Gyerek adag)</strong><span>300 Ft</span></div>
+                        <div class="menu-item"><strong>Édes tölcsér</strong><span>100 Ft</span></div>
+                        <div class="menu-item"><strong>Ehető díszítés</strong><span>50 Ft</span></div>
+                    </div>
+
+                    <div class="menu-footer">
+                        <button class="menu-cta" type="button" onclick="document.querySelector('.nav-btn[data-target=products]').click();">Tovább a termékeinkhez</button>
+                    </div>
+                </div>
+
+                <div class="facebook-panel">
+                    <div class="facebook-panel-header">Facebook oldalunk</div>
+                    <div class="facebook-embed">
+                        <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Ffusticukraszda%2Fposts%2Fpfbid02HqX6K3JsS1FQM7m8X2zLKoVSR2f6PU9pyC2nP6WkkybK2Mr5Ky1Vk1FTNiDm41hMl&show_text=true&width=500" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BEMUTATKOZÁS -->
+        <section id="about" class="page-section">
+            <h2>Bemutatkozás</h2>
+            <div class="intro-text">
+                <p>A Füsti cukrászda 1972 óta, Szentesen először a Bocskay utcában, ma a Kiss Zsigmond utcán várja vendégeit napi süteményekkel, fagylalttal, kávékészítményekkel. A hozzánk autóval érkezőket tágas, ingyenes parkoló fogadja. Helyben fogyasztásra teraszunk ad lehetőséget. A családi vállalkozás műhelyében 5 cukrász, üzletében 3 eladó igyekszik vendégeink igényeit kielégíteni. A lehető legjobb minőségű alapanyagokból dolgozunk, a különleges kéréseknek is igyekszünk eleget tenni.</p>
+            </div>
+
+            <h3 style="text-align: center; color: var(--dark); margin-top: 40px;">Alapítók</h3>
+            <div class="founders">
+                <div class="founder-card">
+                    <div class="founder-img">👨‍🍳</div>
+                    <h4>Nagyapa</h4>
+                    <p>A cukrászda alapítója, aki a klasszikus ízek mestere.</p>
+                </div>
+                <div class="founder-card">
+                    <div class="founder-img">👩‍🍳</div>
+                    <h4>Nagymami</h4>
+                    <p>A családi receptek őrzője és a finom variációk megtervezője.</p>
+                </div>
+            </div>
+
+            <h3 style="text-align: center; color: var(--dark); margin-top: 40px;">Munkatársak</h3>
+            <div class="grid" style="margin-top: 20px;">
+                <div class="card" style="text-align: center;">
+                    <h3>Cukrászmester</h3>
+                    <p>Kézműves torta- és süteménykészítés.</p>
+                </div>
+                <div class="card" style="text-align: center;">
+                    <h3>Eladó</h3>
+                    <p>Barátságos kiszolgálás és személyre szabott tanácsadás.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- TERMÉKEINK -->
+        <section id="products" class="page-section">
+            <h2>Termékeink</h2>
+
+            <div class="products-layout">
+                <aside class="category-sidebar" aria-label="Kategóriák">
+                    <h3>Kategóriák</h3>
+                    <ul class="category-list">
+                        <li><button class="cat-btn active" data-cat="all" type="button">Összes</button></li>
+                        <li><button class="cat-btn" data-cat="Szeletes sütemények" type="button">Szeletes sütemények</button></li>
+                        <li><button class="cat-btn" data-cat="Alkalmi Torták" type="button">Alkalmi Torták</button></li>
+                        <li><button class="cat-btn" data-cat="Aprósütemények" type="button">Aprósütemények</button></li>
+                        <li><button class="cat-btn" data-cat="Fagylalt" type="button">Fagylalt</button></li>
+                    </ul>
+                </aside>
+
+                <div class="products-content">
+                    <div id="products-grid" class="products-grid">
+                        <p class="loading-text">Betöltés…</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KAPCSOLAT -->
+        <section id="contact" class="page-section">
+            <h2>Kapcsolat</h2>
+            <div class="contact-grid">
+                <div class="map-panel" aria-hidden="false">
+                    <iframe width="100%" height="260" frameborder="0" style="border:0" src="https://www.google.com/maps?q=6600+Szentes+Kiss+Zsigmond+utca+3/4&output=embed" allowfullscreen="" aria-label="Cukrászda helye térképen"></iframe>
+                </div>
+
+                <div class="contact-card">
+                    <h3>Elérhetőség</h3>
+                    <ul class="contact-list">
+                        <li><strong>Cím:</strong> 6600 Szentes, Kiss Zsigmond utca 3/4</li>
+                        <li><strong>Telefon:</strong> <a href="tel:+36301641676">+36 (30) 164-1676</a></li>
+                        <li><strong>E-mail:</strong> <a href="mailto:fustikft@gmail.com">fustikft@gmail.com</a></li>
+                    </ul>
+
+                    <h3>Nyitvatartás</h3>
+                    <ul class="contact-list">
+                        <li><strong>Hétfő - Vasárnap:</strong> 09:00 - 18:00</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Szentesi Füsti Cukrászda. Minden jog fenntartva.</p>
+    </footer>
+
+    <script>
+        /* ---- NAVIGÁCIÓ / SZEKCIÓVÁLTÁS ---- */
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.page-section');
+
+        function switchTo(targetId, clickedBtn) {
+            const current = document.querySelector('.page-section.active');
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            navButtons.forEach(btn => btn.classList.toggle('active', btn === clickedBtn));
+            window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+
+            if (current && current.id === targetId) return;
+
+            function showTarget() {
+                target.style.display = 'block';
+                target.classList.add('anim-in');
+
+                function onIn() {
+                    target.classList.remove('anim-in');
+                    target.classList.add('active');
+                    target.removeEventListener('animationend', onIn);
+                    target.setAttribute('tabindex', '-1');
+                    target.focus({ preventScroll: true });
+                    target.removeAttribute('tabindex');
+                    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+                }
+
+                target.addEventListener('animationend', onIn);
+            }
+
+            if (current) {
+                current.classList.add('anim-out');
+
+                function onOut() {
+                    current.classList.remove('anim-out', 'active');
+                    current.style.display = 'none';
+                    current.removeEventListener('animationend', onOut);
+                    showTarget();
+                }
+
+                current.addEventListener('animationend', onOut);
+            } else {
+                showTarget();
+            }
+        }
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => switchTo(button.dataset.target, button));
+        });
+
+        /* ---- TERMÉKEK BETÖLTÉSE ---- */
+        const productsGrid = document.getElementById('products-grid');
+        const catButtons = document.querySelectorAll('.cat-btn');
+        let allProducts = [];
+
+        const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
+            '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
+            '<rect width="100%" height="100%" fill="#f5ece6"/>' +
+            '<text x="50%" y="50%" font-size="18" fill="#b25a46" text-anchor="middle" dy=".3em">Nincs kép</text>' +
+            '</svg>'
+        );
+
+        async function loadProducts() {
+            if (!productsGrid) return;
+            try {
+                const res = await fetch('/FustiCukraszda/Backend/api/termekek.php');
+                if (!res.ok) throw new Error('Hálózati hiba: ' + res.status);
+                allProducts = await res.json();
+
+                if (!Array.isArray(allProducts)) {
+                    throw new Error('Hibás válasz a szervertől');
+                }
+
+                renderProducts('all');
+            } catch (err) {
+                productsGrid.innerHTML = '<p class="empty-text">Nem sikerült betölteni a termékeket.</p>';
+                console.error(err);
+            }
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderProducts(category) {
+            if (!productsGrid) return;
+
+            const filtered = category === 'all'
+                ? allProducts
+                : allProducts.filter(p => p.kategoria === category);
+
+            if (!filtered.length) {
+                productsGrid.innerHTML = '<p class="empty-text">Ebben a kategóriában jelenleg nincs termék.</p>';
+                return;
+            }
+
+            productsGrid.innerHTML = filtered.map(p => `
+                <article class="product-card">
+                    <img class="product-img"
+                         src="${escapeHtml(p.image_url)}"
+                         alt="${escapeHtml(p.nev)}"
+                         loading="lazy"
+                         onerror="this.onerror=null;this.src='${PLACEHOLDER}';">
+                    <div class="product-body">
+                        <span class="product-cat">${escapeHtml(p.kategoria)}</span>
+                        <h4>${escapeHtml(p.nev)}</h4>
+                        <span class="product-price">${Number(p.ar).toLocaleString('hu-HU')} Ft</span>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        catButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                catButtons.forEach(b => b.classList.toggle('active', b === btn));
+                renderProducts(btn.dataset.cat);
+            });
+        });
+
+        loadProducts();
+    </script>
+</body>
+</html>
