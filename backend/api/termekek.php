@@ -41,8 +41,14 @@ try {
     foreach ($termekek as &$t) {
         $t['ar'] = (int)$t['ar'];
         $filename = basename((string)$t['image_url']);
-        // Absolute path from webroot to avoid resolving issues in different pages
-        $t['image_url'] = '/FustiCukraszda-main/backend/uploads/' . rawurlencode($filename);
+
+        $scriptPath = $_SERVER['SCRIPT_NAME'] ?? '/index.php';
+        $projectRoot = preg_replace('#/backend(?:/api)?$#', '', dirname($scriptPath) ?: '/');
+        if ($projectRoot === '') {
+            $projectRoot = '';
+        }
+
+        $t['image_url'] = $projectRoot . '/backend/Uploads/' . rawurlencode($filename);
     }
     unset($t);
 
