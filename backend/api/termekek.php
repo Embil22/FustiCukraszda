@@ -35,11 +35,14 @@ try {
 
     $termekek = $stmt->fetchAll();
 
-    // A képek a Backend/uploads/ mappában vannak.
-    // Abszolút útvonalat adunk vissza a webszerver gyökeréhez képest:
+    // A képek a backend/uploads mappában vannak a projektben.
+    // Visszaadunk egy kliens-oldalról értelmezhető relatív elérési utat
+    // és URL-encode-oljuk a fájlnevet (szóközök, ékezetek miatt).
     foreach ($termekek as &$t) {
         $t['ar'] = (int)$t['ar'];
-        $t['image_url'] = '/FustiCukraszda/Backend/' . ltrim((string)$t['image_url'], '/');
+        $filename = basename((string)$t['image_url']);
+        // Absolute path from webroot to avoid resolving issues in different pages
+        $t['image_url'] = '/FustiCukraszda-main/backend/uploads/' . rawurlencode($filename);
     }
     unset($t);
 
