@@ -92,7 +92,7 @@ header {
 /* --- HERO SZEKCIÓ --- */
 .hero {
     position: relative;
-    background: url('https://scontent-vie1-1.xx.fbcdn.net/v/t39.30808-6/689010508_1551757416949933_6907001789172830124_n.jpg?stp=cp6_dst-jpg_tt6&cstp=mx2048x1536&ctp=s2048x1536&_nc_cat=107&ccb=1-7&_nc_sid=833d8c&_nc_ohc=hLYWs5sqDl8Q7kNvwF8fc3Q&_nc_oc=AdqI7HL3k1hz70_mUOYzJ3jWrQ_QnXG2kueLnhtWgBQZG2soogOLaJJCFM26zudJObk&_nc_zt=23&_nc_ht=scontent-vie1-1.xx&_nc_gid=89SogJaFIBb3HN_3NlU14w&_nc_ss=7b2a8&oh=00_AQIm093T8SfSlhWhDhrmAMRUwmafXbE15FgumKaB8Y1xqw&oe=6AB030BD') center/cover no-repeat;
+    background: url('../backend/Uploads/hero.jpeg') center/cover no-repeat;
     min-height: 70vh;
     display: flex;
     flex-direction: column;
