@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Füsti Cukrászda</title>
-    <link rel="stylesheet" href="/FustiCukraszda-main/backend/style.css">
+    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css">
 </head>
 <body>
 
@@ -221,7 +221,8 @@
         async function loadProducts() {
             if (!productsGrid) return;
             try {
-                const res = await fetch('/FustiCukraszda-main/backend/api/termekek.php');
+                const apiUrl = new URL('backend/api/termekek.php', window.location.href).toString();
+                const res = await fetch(apiUrl);
                 if (!res.ok) throw new Error('Hálózati hiba: ' + res.status);
                 allProducts = await res.json();
 
