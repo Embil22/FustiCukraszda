@@ -502,7 +502,7 @@ header {
 }
 
 .hero-progress.is-running .hero-progress-fill {
-    animation: heroProgress 5000ms linear forwards;
+    animation: heroProgress 8000ms linear forwards;
 }
 
 @keyframes heroProgress {
