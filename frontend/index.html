@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Füsti Cukrászda</title>
-    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=28">
+    <link rel="icon" type="image/png" href="/FustiCukraszda/backend/Uploads/logo.png?v=2">
+    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=29">
 </head>
 <body>
 
@@ -101,7 +102,7 @@
 
                 <article class="story-block reveal">
                     <div class="story-media">
-                        <img src="/FustiCukraszda/backend/Uploads/hero.jpeg" alt="Füsti Cukrászda cukrászda belső tere">
+                        <img src="/FustiCukraszda/backend/Uploads/cukraszda.jpg" alt="Füsti Cukrászda cukrászda belső tere">
                     </div>
                     <div class="story-content">
                         <span class="eyebrow">A cukrászda</span>
@@ -121,7 +122,7 @@
                 <article class="story-block story-block-alt reveal">
                     <div class="story-content">
                         <span class="eyebrow">Az alapítók</span>
-                        <h3>Nagyapa és nagymami, akik az ízeket életre keltették</h3>
+                        <h3>Füsti-Molnár Lajos és Ica, akik az ízeket életre keltették</h3>
                         <p>
                             A cukrászda története nagyapánk és nagymamánk elkötelezett munkájával kezdődött. Ők ültették el a családi hagyományokat, a precíz kézművességet és a vendégszerető hozzáállást, amely máig meghatározza a cukrászda szellemiségét.
                             Minden recept mögött a rend, a türelem és a szeretet áll, amely ma is jelen van a pultunk mögött és a tortáinkban.
@@ -130,11 +131,11 @@
                     <div class="story-media story-media-grid">
                         <div class="portrait-card">
                             <img src="/FustiCukraszda/backend/Uploads/Nagyapa.jpg" alt="Nagyapa portréja">
-                            <div class="portrait-caption">Nagyapa</div>
+                            <div class="portrait-caption">Füsti-Molnár Lajos</div>
                         </div>
                         <div class="portrait-card">
                             <img src="/FustiCukraszda/backend/Uploads/Nagymami.jpg" alt="Nagymami portréja">
-                            <div class="portrait-caption">Nagymami</div>
+                            <div class="portrait-caption">Füsti-Molnár Ica</div>
                         </div>
                     </div>
                 </article>
@@ -310,10 +311,8 @@
                 </aside>
 
                 <div class="products-content">
-                    <div class="product-search" role="search">
-                        <label for="product-search">Keresés a sütemények között</label>
-                        <input id="product-search" type="search" placeholder="Pl. Eszterházy, fagylalt..." autocomplete="off">
-                    </div>
+                    <label class="product-search-label" for="product-search">Keresés a sütemények között</label>
+                    <input class="product-search" id="product-search" type="search" placeholder="Pl. Eszterházy, krémes..." autocomplete="off">
                     <div id="products-grid" class="products-grid">
                         <p class="loading-text">Betöltés…</p>
                     </div>
@@ -493,7 +492,7 @@
                     void heroProgress.offsetWidth;
                     heroProgress.classList.add('is-running');
                     heroTimer = window.setInterval(() => showImage(currentImageIndex + 1), 8000);
-                }
+                 }
 
                 heroControls.hidden = false;
                 heroControls.querySelectorAll('[data-hero-step]').forEach(button => {
@@ -658,10 +657,6 @@
             });
         }
 
-        if (productSearch) {
-            productSearch.addEventListener('input', () => renderProducts());
-        }
-
         catButtons.forEach(btn => {
             btn.addEventListener('click', () => {
                 catButtons.forEach(b => b.classList.toggle('active', b === btn));
@@ -677,6 +672,10 @@
                 }
             });
         });
+
+        if (productSearch) {
+            productSearch.addEventListener('input', () => renderProducts());
+        }
 
         if (categorySidebar && categoryToggle) {
             categoryToggle.addEventListener('click', () => {
