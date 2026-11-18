@@ -256,6 +256,50 @@ header {
     min-width: 0;
 }
 
+.brand-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+}
+
+.brand-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.brand-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    margin-top: 4px;
+    font-size: 0.85rem;
+}
+
+.brand-contact-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.brand-contact-item svg {
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+    fill: none;
+    stroke: var(--primary);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.8;
+}
+
+.brand-contact a:hover {
+    color: var(--primary);
+}
+
 .logo {
     color: #780c0d;
     font-family: 'ballentines', serif;
@@ -270,14 +314,17 @@ header {
     align-items: center;
     gap: 7px;
     flex: 0 0 auto;
-    transform: translateY(5px);
-    padding: 6px 11px;
+    align-self: flex-end;
+    transform: translateY(clamp(-10px, -0.75vw, -6px));
+    padding: 6px 12px;
     border: 1px solid;
-    border-radius: 999px;
+    border-radius: 10px;
     font-size: 0.82rem;
     font-weight: 700;
     line-height: 1.2;
     white-space: nowrap;
+    box-shadow: 0 2px 7px rgba(59, 42, 36, 0.08);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .opening-status.is-open {
@@ -1178,7 +1225,7 @@ h2::after {
 
 .product-search {
     position: sticky;
-    top: 100px;
+    top: 150px;
     z-index: 14;
     display: block;
     width: calc(100% - 20px);
@@ -1217,7 +1264,14 @@ h2::after {
     padding: 22px 18px;
     box-shadow: 0 8px 22px rgba(74, 44, 42, 0.06);
     position: sticky;
-    top: 100px;
+    top: 150px;
+}
+
+@media (min-width: 769px) and (max-width: 1099px) {
+    .product-search,
+    .category-sidebar {
+        top: 200px;
+    }
 }
 
 .category-header {
@@ -1391,7 +1445,7 @@ h2::after {
 
     .opening-status {
         margin-top: 0;
-        transform: none;
+        transform: translateY(-6px);
         padding: 5px 8px;
         font-size: 0.75rem;
     }
@@ -1530,12 +1584,12 @@ h2::after {
         border: none;
         box-shadow: none;
         position: sticky;
-        top: 130px;
+        top: 155px;
         z-index: 15;
     }
 
     .product-search {
-        top: 195px;
+        top: 220px;
     }
 
     .category-header {
@@ -1633,6 +1687,16 @@ h2::after {
 
     .story-content h3 {
         font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 350px) {
+    .category-sidebar {
+        top: 190px;
+    }
+
+    .product-search {
+        top: 255px;
     }
 }
 

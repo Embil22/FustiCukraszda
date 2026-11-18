@@ -14,6 +14,12 @@ $ervenyesKategoriak = [
     'Alkalmi Torták',
     'Aprósütemények',
     'Fagylalt',
+    'Sütifree',
+    'Tejszínes torták',
+    'Főzött krémes torták',
+    'Különleges torták',
+    'Kreatív díszítésű torták',
+    'Pohárkrém',
 ];
 
 try {

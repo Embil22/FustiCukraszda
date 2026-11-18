@@ -23,7 +23,13 @@ CREATE TABLE termekek (
     'Szeletes sütemények',
     'Alkalmi Torták',
     'Aprósütemények',
-    'Fagylalt'
+    'Fagylalt',
+    'Sütifree',
+    'Tejszínes torták',
+    'Főzött krémes torták',
+    'Különleges torták',
+    'Kreatív díszítésű torták',
+    'Pohárkrém'
   ) NOT NULL,
   ar INT NOT NULL,
   image_url VARCHAR(255) NOT NULL,
