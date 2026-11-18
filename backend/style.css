@@ -1177,7 +1177,12 @@ h2::after {
 }
 
 .product-search {
+    position: sticky;
+    top: 100px;
+    z-index: 14;
     margin-bottom: 20px;
+    padding: 10px 0;
+    background: var(--secondary);
 }
 
 .product-search label {
@@ -1531,6 +1536,10 @@ h2::after {
         position: sticky;
         top: 130px;
         z-index: 15;
+    }
+
+    .product-search {
+        top: 195px;
     }
 
     .category-header {
