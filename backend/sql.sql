@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 18, 2026 at 10:27 PM
+-- Generation Time: Nov 18, 2026 at 10:36 PM
 -- Server version: 8.4.3
 -- PHP Version: 8.3.33
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `fusti_cukraszda`
 --
+CREATE DATABASE IF NOT EXISTS `fusti_cukraszda` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_hungarian_ci;
+USE `fusti_cukraszda`;
 
 -- --------------------------------------------------------
 
