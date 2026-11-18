@@ -220,6 +220,10 @@ img { max-width: 100%; display: block; }
     .image-lightbox.is-closing::backdrop {
         animation-duration: 1ms;
     }
+
+    .hero-slide {
+        transition-duration: 1ms;
+    }
 }
 
 /* --- NAVIGÁCIÓ --- */
@@ -390,6 +394,119 @@ header {
     color: white;
     padding: 40px 20px;
     overflow: hidden;
+}
+
+.hero-slides {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    border-radius: inherit;
+}
+
+.hero-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transform: scale(1.03);
+    transition: opacity 1100ms ease, transform 5s ease;
+}
+
+.hero-slide.is-active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hero-controls {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.hero-controls[hidden] {
+    display: none;
+}
+
+.hero-arrow {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    place-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    border-radius: 50%;
+    background: transparent;
+    color: white;
+    opacity: 0.55;
+    padding: 0;
+    cursor: pointer;
+    pointer-events: auto;
+    transform: translateY(-50%);
+    transition: opacity 180ms ease;
+}
+
+.hero-arrow svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.hero-arrow[data-hero-step="-1"] {
+    left: 20px;
+}
+
+.hero-arrow[data-hero-step="1"] {
+    right: 20px;
+}
+
+.hero-arrow:hover {
+    opacity: 1;
+}
+
+.hero-arrow:focus-visible {
+    outline: 3px solid white;
+    outline-offset: 3px;
+    opacity: 1;
+}
+
+.hero-progress {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: min(240px, calc(100% - 160px));
+    height: 4px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.5);
+    pointer-events: none;
+    transform: translateX(-50%);
+}
+
+.hero-progress-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform: scaleX(0);
+    transform-origin: left;
+    background: white;
+}
+
+.hero-progress.is-running .hero-progress-fill {
+    animation: heroProgress 5000ms linear forwards;
+}
+
+@keyframes heroProgress {
+    to { transform: scaleX(1); }
 }
 
 .hero-overlay {
