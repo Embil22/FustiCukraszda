@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Füsti Cukrászda</title>
-    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=26">
+    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=27">
 </head>
 <body>
 
@@ -310,6 +310,10 @@
                 </aside>
 
                 <div class="products-content">
+                    <div class="product-search" role="search">
+                        <label for="product-search">Keresés a sütemények között</label>
+                        <input id="product-search" type="search" placeholder="Pl. Eszterházy, fagylalt..." autocomplete="off">
+                    </div>
                     <div id="products-grid" class="products-grid">
                         <p class="loading-text">Betöltés…</p>
                     </div>
@@ -558,7 +562,9 @@
         const categorySidebar = document.querySelector('.category-sidebar');
         const categoryToggle = document.querySelector('.category-toggle');
         const categoryToggleLabel = document.querySelector('.category-toggle-label');
+        const productSearch = document.getElementById('product-search');
         let allProducts = [];
+        let activeCategory = 'all';
 
         const PLACEHOLDER = "data:image/svg+xml;utf8," + encodeURIComponent(
             '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300">' +
@@ -595,15 +601,29 @@
                 .replace(/'/g, '&#39;');
         }
 
-        function renderProducts(category) {
-            if (!productsGrid) return;
+        function normalizeSearchText(value) {
+            return String(value || '')
+                .normalize('NFD')
+                .replace(/[\u0300-\u036f]/g, '')
+                .toLocaleLowerCase('hu-HU');
+        }
 
-            const filtered = category === 'all'
-                ? allProducts
-                : allProducts.filter(p => p.kategoria === category);
+        function renderProducts(category = activeCategory) {
+            if (!productsGrid) return;
+            activeCategory = category;
+
+            const query = normalizeSearchText(productSearch ? productSearch.value.trim() : '');
+            const filtered = allProducts.filter(product => {
+                const matchesCategory = category === 'all' || product.kategoria === category;
+                const matchesSearch = !query || normalizeSearchText(`${product.nev} ${product.kategoria}`).includes(query);
+                return matchesCategory && matchesSearch;
+            });
 
             if (!filtered.length) {
-                productsGrid.innerHTML = '<p class="empty-text">Ebben a kategóriában jelenleg nincs termék.</p>';
+                const emptyMessage = query
+                    ? 'Nincs találat a keresésre.'
+                    : 'Ebben a kategóriában jelenleg nincs termék.';
+                productsGrid.innerHTML = `<p class="empty-text">${emptyMessage}</p>`;
                 return;
             }
 
@@ -636,6 +656,10 @@
                     openImageLightbox(trigger.dataset.imageSrc, trigger.dataset.imageAlt);
                 });
             });
+        }
+
+        if (productSearch) {
+            productSearch.addEventListener('input', () => renderProducts());
         }
 
         catButtons.forEach(btn => {
