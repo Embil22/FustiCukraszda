@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Füsti Cukrászda</title>
     <link rel="icon" type="image/png" href="/FustiCukraszda/backend/Uploads/logo.png?v=2">
-    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=37">
+    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=49">
 </head>
 <body>
 
@@ -54,8 +54,6 @@
             <div class="hero">
                 <div class="hero-slides" aria-hidden="true"></div>
                 <div class="hero-overlay" aria-hidden="true"></div>
-                <h1>Füsti Cukrászda</h1>
-                <p>Hagyomány és minőség egy helyen. Kézműves sütemények, torták és fagylaltok szeretettel.</p>
                 <div class="hero-controls" hidden>
                     <button class="hero-arrow" type="button" data-hero-step="-1" aria-label="Előző kép">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"></path></svg>
@@ -69,41 +67,29 @@
                 </div>
             </div>
 
-            <div class="menu-layout">
-                <div class="menu-board">
-                    <div class="menu-header">
-                        <h3>Amit kínálunk</h3>
+            <div class="home-feature-cards">
+                <section id="current-offer" class="current-offer" aria-labelledby="current-offer-heading" aria-live="polite" hidden>
+                    <div class="current-offer-copy">
+                        <h2 id="current-offer-heading">Aktuális ajánlatunk</h2>
+                        <p id="current-offer-text"></p>
                     </div>
-
-                    <div class="menu-category">
-                        <h4>Torták</h4>
-                        <div class="menu-item"><strong>Bajor (7 szelet) </strong><span>6000 Ft</span></div>
-                        <div class="menu-item"><strong>Zsúr (10 szelet) </strong><span>9000 Ft</span></div>
-                        <div class="menu-item"><strong>Normál (16 szelet) </strong><span>13600 Ft</span></div>
-                        <div class="menu-item"><strong>Malom (24 szelet) </strong><span>20400 Ft</span></div>
-                        <div class="menu-item"><strong>Tortadoboz</strong><span>500 Ft</span></div>
-                    </div>
-
-                    <div class="menu-category">
-                        <h4>Fagylalt</h4>
-                        <div class="menu-item"><strong>Fagylalt gombóc (Normál adag)</strong><span>550 Ft</span></div>
-                        <div class="menu-item"><strong>Fagylalt gombóc (Gyerek adag)</strong><span>300 Ft</span></div>
-                        <div class="menu-item"><strong>Édes tölcsér</strong><span>100 Ft</span></div>
-                        <div class="menu-item"><strong>Ehető díszítés</strong><span>50 Ft</span></div>
-                    </div>
-
-                    <div class="menu-footer">
-                        <button class="menu-cta" type="button" onclick="document.querySelector('.nav-btn[data-target=products]').click();">Tovább a termékeinkhez</button>
-                    </div>
-                </div>
+                    <img id="current-offer-image" class="current-offer-image" alt="" hidden>
+                </section>
 
                 <div class="facebook-panel">
                     <div class="facebook-panel-header">Facebook oldalunk</div>
                     <div class="facebook-embed">
-                        <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fphoto%2F%3Ffbid%3D1540367121422296%26set%3Da.209968761128812&show_text=true&width=500" width="500" height="290" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
+                        <iframe src="about:blank" data-facebook-src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fphoto%2F%3Ffbid%3D1540367121422296%26set%3Da.209968761128812&show_text=true" width="750" height="420" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                     </div>
                 </div>
             </div>
+
+            <aside class="review-invite" aria-labelledby="review-invite-heading">
+                <span class="review-invite-eyebrow">Véleménye fontos nekünk</span>
+                <h2 id="review-invite-heading">Jól érezte magát nálunk?</h2>
+                <p>Ha tetszettek a süteményeink, írja meg a véleményét a Google-on! Értékelése sokat jelent nekünk, és segít másoknak is megtalálni a kedvenceiket.</p>
+                <a class="review-invite-link" href="https://www.google.com/maps/search/?api=1&amp;query=F%C3%BCsti%20Cukr%C3%A1szda%2C%206600%20Szentes%2C%20Kiss%20Zsigmond%20utca%203%2F4" target="_blank" rel="noopener noreferrer">Értékelés írása a Google-on</a>
+            </aside>
         </section>
 
         <!-- BEMUTATKOZÁS -->
@@ -380,6 +366,39 @@
     <script>
         /* ---- NYITVA / ZÁRVA JELZŐ ---- */
         const openingStatus = document.getElementById('opening-status');
+        const facebookEmbed = document.querySelector('.facebook-embed');
+        const facebookFrame = facebookEmbed ? facebookEmbed.querySelector('iframe') : null;
+
+        if (facebookEmbed && facebookFrame) {
+            const facebookFrameUrl = new URL(facebookFrame.dataset.facebookSrc, window.location.href);
+            let currentFacebookWidth = 0;
+
+            function resizeFacebookEmbed() {
+                const availableWidth = facebookEmbed.clientWidth;
+                if (!availableWidth) return;
+
+                const width = Math.min(750, Math.max(180, Math.round(availableWidth)));
+                if (width === currentFacebookWidth) return;
+
+                currentFacebookWidth = width;
+                const frameUrl = new URL(facebookFrameUrl);
+                frameUrl.searchParams.set('width', String(width));
+                facebookFrame.width = String(width);
+                facebookFrame.style.height = `${Math.min(500, Math.max(260, Math.round(width * 0.55 - 10)))}px`;
+
+                if (facebookFrame.src !== frameUrl.href) {
+                    facebookFrame.src = frameUrl.href;
+                }
+            }
+
+            resizeFacebookEmbed();
+
+            if ('ResizeObserver' in window) {
+                const facebookEmbedObserver = new ResizeObserver(resizeFacebookEmbed);
+                facebookEmbedObserver.observe(facebookEmbed);
+            }
+            window.addEventListener('resize', resizeFacebookEmbed);
+        }
 
         function updateOpeningStatus() {
             if (!openingStatus) return;
@@ -582,6 +601,10 @@
         const categoryToggle = document.querySelector('.category-toggle');
         const categoryToggleLabel = document.querySelector('.category-toggle-label');
         const productSearch = document.getElementById('product-search');
+        const homeFeatureCards = document.querySelector('.home-feature-cards');
+        const currentOfferCard = document.getElementById('current-offer');
+        const currentOfferText = document.getElementById('current-offer-text');
+        const currentOfferImage = document.getElementById('current-offer-image');
         let allProducts = [];
         let activeCategory = 'all';
 
@@ -608,6 +631,39 @@
             } catch (err) {
                 productsGrid.innerHTML = '<p class="empty-text">Nem sikerült betölteni a termékeket.</p>';
                 console.error(err);
+            }
+        }
+
+        async function loadCurrentOffer() {
+            if (!currentOfferCard || !currentOfferText || !currentOfferImage) return;
+
+            currentOfferImage.addEventListener('error', () => {
+                console.error('Az aktuális ajánlat képe nem tölthető be.');
+                currentOfferImage.hidden = true;
+                currentOfferCard.classList.remove('has-image');
+            });
+
+            try {
+                const apiUrl = new URL('backend/api/ajanlat.php', window.location.href).toString();
+                const response = await fetch(apiUrl, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Hálózati hiba: ' + response.status);
+
+                const offer = await response.json();
+                if (offer.enabled && typeof offer.text === 'string' && offer.text.trim()) {
+                    currentOfferText.textContent = offer.text.trim();
+                    if (typeof offer.image_url === 'string' && offer.image_url) {
+                        currentOfferImage.src = offer.image_url;
+                        currentOfferImage.alt = 'Az aktuális ajánlat illusztrációja';
+                        currentOfferImage.hidden = false;
+                        currentOfferCard.classList.add('has-image');
+                    }
+                    currentOfferCard.hidden = false;
+                    if (homeFeatureCards) {
+                        homeFeatureCards.classList.add('has-offer');
+                    }
+                }
+            } catch (error) {
+                console.error('Az aktuális ajánlat betöltése nem sikerült.', error);
             }
         }
 
@@ -706,6 +762,7 @@
         }
 
         loadProducts();
+        loadCurrentOffer();
     </script>
 </body>
 </html>
