@@ -44,7 +44,7 @@ function validAdminReturnAnchor($anchor): string
     }
 
     return preg_match(
-        '/^(?:admin-header|admin-login|product-create|offer-settings|user-create|user-list|password-settings|product-list|product-[1-9][0-9]*|user-[1-9][0-9]*)$/D',
+        '/^(?:admin-header|admin-login|product-create|offer-settings|category-images|hero-images|user-create|user-list|password-settings|product-list|product-[1-9][0-9]*|user-[1-9][0-9]*)$/D',
         $anchor
     ) ? $anchor : '';
 }
@@ -592,6 +592,182 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         }
                         redirectAdmin($adminUrl, 'Az aktuális ajánlat beállításai mentve.');
                     }
+                } elseif ($action === 'save_category_image') {
+                    $category = (string)($_POST['category'] ?? '');
+                    $removeCategoryImage = isset($_POST['remove_category_image'])
+                        && $_POST['remove_category_image'] === '1';
+                    $categoryUpload = $_FILES['category_image_file'] ?? null;
+                    $categoryUploadError = is_array($categoryUpload)
+                        ? (int)($categoryUpload['error'] ?? UPLOAD_ERR_NO_FILE)
+                        : UPLOAD_ERR_NO_FILE;
+                    $hasCategoryUpload = $categoryUploadError !== UPLOAD_ERR_NO_FILE;
+                    $newCategoryImage = null;
+
+                    if (!in_array($category, $categories, true)) {
+                        $errors[] = 'Válassz érvényes kategóriát.';
+                    } elseif ($removeCategoryImage && $hasCategoryUpload) {
+                        $errors[] = 'Egyszerre új képet feltölteni és a jelenlegi képet eltávolítani nem lehet.';
+                    } elseif (!$removeCategoryImage && !$hasCategoryUpload) {
+                        $errors[] = 'Válassz ki egy képet, vagy jelöld be a jelenlegi kép eltávolítását.';
+                    }
+
+                    $settingsQuery = $pdo->prepare(
+                        "SELECT setting_value FROM site_settings WHERE setting_key = 'category_images'"
+                    );
+                    $settingsQuery->execute();
+                    $decodedCategoryImages = json_decode((string)($settingsQuery->fetchColumn() ?: '{}'), true);
+                    $categoryImages = is_array($decodedCategoryImages) ? $decodedCategoryImages : [];
+                    $oldCategoryImage = (string)($categoryImages[$category] ?? '');
+                    $categoryImageToSave = $oldCategoryImage;
+
+                    if (!$errors && $hasCategoryUpload) {
+                        if (!is_array($categoryUpload)) {
+                            $errors[] = 'A kép feltöltése nem sikerült.';
+                        } else {
+                            try {
+                                $newCategoryImage = storeAdminImage($categoryUpload);
+                                $categoryImageToSave = $newCategoryImage;
+                            } catch (AdminImageUploadException $exception) {
+                                $errors[] = $exception->getMessage();
+                            }
+                        }
+                    }
+
+                    if (!$errors) {
+                        if ($removeCategoryImage) {
+                            unset($categoryImages[$category]);
+                        } else {
+                            $categoryImages[$category] = $categoryImageToSave;
+                        }
+
+                        try {
+                            $pdo->beginTransaction();
+                            $stmt = $pdo->prepare(
+                                'INSERT INTO site_settings (setting_key, setting_value)
+                                 VALUES (:setting_key, :setting_value)
+                                 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)'
+                            );
+                            $stmt->execute([
+                                ':setting_key' => 'category_images',
+                                ':setting_value' => json_encode($categoryImages, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                            ]);
+                            $pdo->commit();
+                        } catch (PDOException $exception) {
+                            if ($pdo->inTransaction()) {
+                                $pdo->rollBack();
+                            }
+                            if ($newCategoryImage !== null) {
+                                deleteAdminImage($newCategoryImage);
+                            }
+                            throw $exception;
+                        }
+
+                        if ($oldCategoryImage !== '' && ($removeCategoryImage || $oldCategoryImage !== $categoryImageToSave)) {
+                            deleteAdminImage($oldCategoryImage);
+                        }
+                        redirectAdmin($adminUrl, 'A kategóriakártya képe mentve.');
+                    }
+                } elseif ($action === 'save_hero_images') {
+                    $settingsQuery = $pdo->prepare(
+                        "SELECT setting_value FROM site_settings WHERE setting_key = 'hero_images'"
+                    );
+                    $settingsQuery->execute();
+                    $decodedHeroImages = json_decode((string)($settingsQuery->fetchColumn() ?: '[]'), true);
+                    $existingHeroImages = [];
+                    if (is_array($decodedHeroImages)) {
+                        foreach ($decodedHeroImages as $imagePath) {
+                            if (
+                                is_string($imagePath)
+                                && preg_match('#^Uploads/[a-f0-9]{32}\.(?:jpg|png|webp)$#D', $imagePath)
+                            ) {
+                                $existingHeroImages[] = $imagePath;
+                            }
+                        }
+                    }
+
+                    $removeHeroImages = $_POST['remove_hero_images'] ?? [];
+                    if (!is_array($removeHeroImages)) {
+                        $removeHeroImages = [];
+                    }
+                    $removeHeroImages = array_values(array_filter(
+                        $removeHeroImages,
+                        static fn($imagePath): bool => is_string($imagePath)
+                            && preg_match('#^Uploads/[a-f0-9]{32}\.(?:jpg|png|webp)$#D', $imagePath)
+                    ));
+                    $heroImagesToSave = array_values(array_filter(
+                        $existingHeroImages,
+                        static fn(string $imagePath): bool => !in_array($imagePath, $removeHeroImages, true)
+                    ));
+
+                    $heroUpload = $_FILES['hero_images'] ?? null;
+                    $uploadFiles = [];
+                    if (is_array($heroUpload) && isset($heroUpload['name']) && is_array($heroUpload['name'])) {
+                        foreach ($heroUpload['name'] as $index => $name) {
+                            $uploadError = (int)($heroUpload['error'][$index] ?? UPLOAD_ERR_NO_FILE);
+                            if ($uploadError === UPLOAD_ERR_NO_FILE) {
+                                continue;
+                            }
+                            $uploadFiles[] = [
+                                'name' => $name,
+                                'type' => $heroUpload['type'][$index] ?? '',
+                                'tmp_name' => $heroUpload['tmp_name'][$index] ?? '',
+                                'error' => $uploadError,
+                                'size' => $heroUpload['size'][$index] ?? 0,
+                            ];
+                        }
+                    }
+
+                    $newHeroImages = [];
+                    if (count($heroImagesToSave) + count($uploadFiles) > 10) {
+                        $errors[] = 'Legfeljebb 10 kép szerepelhet a hero váltóban.';
+                    } elseif (!$uploadFiles && !$removeHeroImages) {
+                        $errors[] = 'Tölts fel képet, vagy jelöld be az eltávolítandó képeket.';
+                    }
+
+                    if (!$errors) {
+                        foreach ($uploadFiles as $uploadFile) {
+                            try {
+                                $newHeroImages[] = storeAdminImage($uploadFile);
+                            } catch (AdminImageUploadException $exception) {
+                                $errors[] = $exception->getMessage();
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($errors) {
+                        foreach ($newHeroImages as $imagePath) {
+                            deleteAdminImage($imagePath);
+                        }
+                    } else {
+                        $heroImagesToSave = array_merge($heroImagesToSave, $newHeroImages);
+                        try {
+                            $pdo->beginTransaction();
+                            $stmt = $pdo->prepare(
+                                'INSERT INTO site_settings (setting_key, setting_value)
+                                 VALUES (:setting_key, :setting_value)
+                                 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)'
+                            );
+                            $stmt->execute([
+                                ':setting_key' => 'hero_images',
+                                ':setting_value' => json_encode($heroImagesToSave, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                            ]);
+                            $pdo->commit();
+                        } catch (PDOException $exception) {
+                            if ($pdo->inTransaction()) {
+                                $pdo->rollBack();
+                            }
+                            foreach ($newHeroImages as $imagePath) {
+                                deleteAdminImage($imagePath);
+                            }
+                            throw $exception;
+                        }
+
+                        foreach (array_diff($existingHeroImages, $heroImagesToSave) as $imagePath) {
+                            deleteAdminImage($imagePath);
+                        }
+                        redirectAdmin($adminUrl, 'A hero képei mentve.');
+                    }
                 } elseif ($action === 'create_user') {
                     $newUsername = trim((string)($_POST['new_username'] ?? ''));
                     $newUserPassword = (string)($_POST['new_user_password'] ?? '');
@@ -790,7 +966,7 @@ if ($schemaReady) {
     $stmt = $pdo->query(
         "SELECT setting_key, setting_value
          FROM site_settings
-         WHERE setting_key IN ('offer_enabled', 'offer_text', 'offer_image')"
+         WHERE setting_key IN ('offer_enabled', 'offer_text', 'offer_image', 'category_images', 'hero_images')"
     );
     foreach ($stmt->fetchAll() as $setting) {
         $settings[(string)$setting['setting_key']] = (string)$setting['setting_value'];
@@ -835,6 +1011,18 @@ $offerImageFilename = $offerImage !== '' ? basename($offerImage) : '';
 $offerImageUrl = preg_match('/^[a-f0-9]{32}\.(?:jpg|png|webp)$/', $offerImageFilename)
     ? ($projectRoot !== '' ? $projectRoot : '') . '/backend/Uploads/' . rawurlencode($offerImageFilename)
     : '';
+$decodedCategoryImages = json_decode($settings['category_images'] ?? '{}', true);
+$categoryImages = is_array($decodedCategoryImages) ? $decodedCategoryImages : [];
+$decodedHeroImages = json_decode($settings['hero_images'] ?? '[]', true);
+$heroImages = is_array($decodedHeroImages) ? array_values(array_filter(
+    $decodedHeroImages,
+    static fn($imagePath): bool => is_string($imagePath)
+        && preg_match('#^Uploads/[a-f0-9]{32}\.(?:jpg|png|webp)$#D', $imagePath)
+)) : [];
+$heroImageUrls = array_map(
+    static fn(string $imagePath): string => adminProductImageUrl($projectRoot, $imagePath),
+    $heroImages
+);
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -842,7 +1030,7 @@ $offerImageUrl = preg_match('/^[a-f0-9]{32}\.(?:jpg|png|webp)$/', $offerImageFil
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Adminisztráció – Füsti Cukrászda</title>
-    <link rel="stylesheet" href="admin.css?v=18">
+    <link rel="stylesheet" href="admin.css?v=20">
 </head>
 <body data-return-anchor="<?= adminEscape($returnAnchor) ?>">
     <header class="admin-header" id="admin-header">
@@ -851,12 +1039,11 @@ $offerImageUrl = preg_match('/^[a-f0-9]{32}\.(?:jpg|png|webp)$/', $offerImageFil
             <nav class="admin-nav" aria-label="Admin navigáció">
                 <a href="#product-create">Új termék</a>
                 <a href="#offer-settings">Ajánlat</a>
-                <a href="#user-list">Hozzáférések</a>
+                <a href="#category-images">Kategóriaképek</a>
                 <a href="#product-list">Termékek</a>
             </nav>
         <?php endif; ?>
         <div class="admin-header-actions">
-            <a class="admin-nav-home" href="<?= adminEscape($homeUrl) ?>">Főoldal</a>
         <?php if ($currentAdmin): ?>
             <div class="admin-session">
                 <span><?= adminEscape((string)$currentAdmin['username']) ?></span>
@@ -953,6 +1140,81 @@ $offerImageUrl = preg_match('/^[a-f0-9]{32}\.(?:jpg|png|webp)$/', $offerImageFil
                             </label>
                         <?php endif; ?>
                         <button class="button" type="submit">Ajánlat mentése</button>
+                    </form>
+                </section>
+
+                <section class="panel panel-wide" id="category-images">
+                    <p class="eyebrow">Főoldal</p>
+                    <h2>Kategóriakártyák képei</h2>
+                    <p class="panel-description">Állíts be külön képet minden főoldali kategóriához. Ha nincs saját kép, a kártyán az adott kategória egyik termékképe jelenik meg.</p>
+                    <div class="category-image-settings">
+                        <?php foreach ($categories as $index => $category): ?>
+                            <?php
+                            $categoryImage = (string)($categoryImages[$category] ?? '');
+                            $categoryImageUrl = adminProductImageUrl($projectRoot, $categoryImage);
+                            ?>
+                            <article class="category-image-setting">
+                                <div class="category-image-setting-preview">
+                                    <?php if ($categoryImageUrl !== ''): ?>
+                                        <img src="<?= adminEscape($categoryImageUrl) ?>" alt="<?= adminEscape($category) ?> kategóriakép">
+                                    <?php else: ?>
+                                        <span>Termékkép használata</span>
+                                    <?php endif; ?>
+                                </div>
+                                <div class="category-image-setting-content">
+                                    <h3><?= adminEscape($category) ?></h3>
+                                    <form method="post" action="<?= adminEscape($adminUrl) ?>/" enctype="multipart/form-data">
+                                        <input type="hidden" name="_csrf" value="<?= adminEscape($csrfToken) ?>">
+                                        <input type="hidden" name="action" value="save_category_image">
+                                        <input type="hidden" name="category" value="<?= adminEscape($category) ?>">
+                                        <input type="hidden" name="return_anchor" value="category-images">
+                                        <label for="category-image-<?= $index ?>">Saját kép (JPG, PNG vagy WebP, max. 5 MB)</label>
+                                        <input id="category-image-<?= $index ?>" name="category_image_file" type="file" accept="image/jpeg,image/png,image/webp">
+                                        <?php if ($categoryImageUrl !== ''): ?>
+                                            <label class="checkbox-label">
+                                                <input type="checkbox" name="remove_category_image" value="1">
+                                                Saját kép eltávolítása
+                                            </label>
+                                        <?php endif; ?>
+                                        <button class="button button-small" type="submit">Kép mentése</button>
+                                    </form>
+                                </div>
+                            </article>
+                        <?php endforeach; ?>
+                    </div>
+                </section>
+
+                <section class="panel panel-wide" id="hero-images">
+                    <p class="eyebrow">Főoldal</p>
+                    <h2>Hero képek váltakozása</h2>
+                    <p class="panel-description">Tölts fel akár 10 képet, ezek jelennek meg egymás után a főoldali nagy képsávban. A kijelölt képek eltávolíthatók; ha nincs egyedi kép beállítva, az alapértelmezett képek váltakoznak.</p>
+                    <form class="hero-images-form" method="post" action="<?= adminEscape($adminUrl) ?>/" enctype="multipart/form-data">
+                        <input type="hidden" name="_csrf" value="<?= adminEscape($csrfToken) ?>">
+                        <input type="hidden" name="action" value="save_hero_images">
+                        <input type="hidden" name="return_anchor" value="hero-images">
+                        <?php if ($heroImages): ?>
+                            <div class="hero-image-settings">
+                                <?php foreach ($heroImages as $index => $imagePath): ?>
+                                    <article class="hero-image-setting">
+                                        <img src="<?= adminEscape($heroImageUrls[$index]) ?>" alt="Hero kép <?= $index + 1 ?>">
+                                        <span>
+                                            <strong><?= $index + 1 ?>. kép</strong>
+                                            <span class="checkbox-label">
+                                                <input id="remove-hero-image-<?= $index ?>" type="checkbox" name="remove_hero_images[]" value="<?= adminEscape($imagePath) ?>">
+                                                Eltávolítás
+                                            </span>
+                                        </span>
+                                    </article>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <p class="hero-images-empty">Jelenleg az alapértelmezett képek váltakoznak.</p>
+                        <?php endif; ?>
+                        <?php if (count($heroImages) < 10): ?>
+                            <label for="hero-images-upload">Új hero képek (JPG, PNG vagy WebP, max. 5 MB/kép)</label>
+                            <input id="hero-images-upload" name="hero_images[]" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+                        <?php endif; ?>
+                        <button class="button" type="submit">Hero képek mentése</button>
                     </form>
                 </section>
 

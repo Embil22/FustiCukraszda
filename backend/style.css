@@ -38,6 +38,19 @@ main {
     flex: 1 0 auto;
 }
 
+footer {
+    flex-shrink: 0;
+    margin-top: 28px;
+    padding: 18px 16px;
+    background: #3b2a24;
+    color: #fff8ef;
+    text-align: center;
+}
+
+footer p {
+    margin: 0;
+}
+
 a { text-decoration: none; color: inherit; }
 ul { list-style: none; }
 img { max-width: 100%; display: block; }
@@ -1905,11 +1918,175 @@ h2::after {
     }
 }
 
-/* --- LÁBLÉC --- */
-footer {
-    background-color: var(--dark);
-    color: white;
+/* --- FŐOLDALI SÜTIKÁRTYA-SZIGET --- */
+.cookie-island {
+    width: min(1120px, calc(100% - 32px));
+    margin: 44px auto 28px;
+    padding: clamp(20px, 3vw, 32px);
+    border: 1px solid rgba(178, 90, 70, 0.16);
+    border-radius: 26px;
+    background:
+        radial-gradient(circle at 8% 0%, rgba(255, 255, 255, 0.95) 0 3%, transparent 24%),
+        linear-gradient(145deg, #fffaf7, #f7e9e1);
+    box-shadow: 0 16px 38px rgba(74, 44, 42, 0.1);
+}
+
+.cookie-island-heading {
     text-align: center;
-    padding: 20px;
-    margin-top: auto;
+    margin-bottom: 24px;
+}
+
+.cookie-island-eyebrow {
+    display: inline-block;
+    padding: 6px 11px;
+    border: 1px solid rgba(178, 90, 70, 0.16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--primary);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.cookie-island-heading h2 {
+    margin: 9px 0 0;
+    font-size: clamp(1.45rem, 3vw, 1.9rem);
+}
+
+.cookie-island-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+    gap: 18px;
+}
+
+.cookie-island-card {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    border: 1px solid rgba(178, 90, 70, 0.12);
+    border-radius: 16px;
+    background: #fff;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    box-shadow: 0 6px 18px rgba(59, 42, 36, 0.08);
+    transition: transform 250ms ease, box-shadow 250ms ease, border-color 250ms ease;
+    cursor: pointer;
+}
+
+.cookie-island-card:focus-visible {
+    outline: 3px solid var(--primary);
+    outline-offset: 4px;
+}
+
+.cookie-island-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(178, 90, 70, 0.28);
+    box-shadow: 0 14px 30px rgba(59, 42, 36, 0.15);
+}
+
+.cookie-island-card:active {
+    transform: translateY(-2px);
+}
+
+.cookie-island-image {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: #f5ece6;
+}
+
+.cookie-island-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 400ms ease;
+}
+
+.cookie-island-card:hover .cookie-island-image img {
+    transform: scale(1.04);
+}
+
+.cookie-island-card-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 15px 16px 17px;
+}
+
+.cookie-island-category {
+    margin-bottom: 5px;
+    color: var(--primary);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+}
+
+.cookie-island-title {
+    display: block;
+    color: var(--dark);
+    font-size: 1rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.cookie-island-link {
+    display: block;
+    width: 100%;
+    margin-top: 13px;
+    padding-top: 11px;
+    border-top: 1px solid rgba(178, 90, 70, 0.12);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 800;
+    transition: color 200ms ease;
+}
+
+.cookie-island-card:hover .cookie-island-link {
+    color: #8b3f2f;
+}
+
+/* --- FŐOLDALI KATEGÓRIAKÁRTYA PANEL --- */
+.home-category-panel {
+    background: rgba(255, 250, 248, 0.88);
+    border-color: rgba(178, 90, 70, 0.2);
+}
+
+.home-category-panel .cookie-island-heading h2 {
+    color: var(--dark);
+}
+
+@media (max-width: 600px) {
+    .cookie-island-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .cookie-island-card-body {
+        padding: 12px;
+    }
+
+    .cookie-island-title {
+        font-size: 0.9rem;
+    }
+
+    .cookie-island-link {
+        font-size: 0.72rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cookie-island-card,
+    .cookie-island-image img,
+    .cookie-island-link {
+        transition: none;
+    }
 }

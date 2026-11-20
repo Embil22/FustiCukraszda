@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Füsti Cukrászda</title>
     <link rel="icon" type="image/png" href="/FustiCukraszda/backend/Uploads/logo.png?v=2">
-    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=49">
+    <link rel="stylesheet" href="/FustiCukraszda/backend/style.css?v=53">
 </head>
 <body>
 
@@ -81,6 +81,16 @@
                     <div class="facebook-embed">
                         <iframe src="about:blank" data-facebook-src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fphoto%2F%3Ffbid%3D1540367121422296%26set%3Da.209968761128812&show_text=true" width="750" height="420" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"></iframe>
                     </div>
+                </div>
+            </div>
+
+            <div class="cookie-island home-category-panel" aria-labelledby="cookie-island-heading">
+                <div class="cookie-island-heading">
+                    <span class="cookie-island-eyebrow">Kóstolja végig</span>
+                    <h2 id="cookie-island-heading">Süteményeink</h2>
+                </div>
+                <div id="cookie-island-grid" class="cookie-island-grid" aria-live="polite">
+                    <p class="loading-text">Sütemények betöltése…</p>
                 </div>
             </div>
 
@@ -487,7 +497,7 @@
         }
 
         /* ---- FŐOLDALI HERO KÉPVÁLTÓ ---- */
-        const HERO_IMAGES = [
+        const DEFAULT_HERO_IMAGES = [
             '/FustiCukraszda/backend/Uploads/hero.jpeg',
             '/FustiCukraszda/backend/Uploads/cukraszda.jpg',
             '/FustiCukraszda/backend/Uploads/alkalmi_torta_1.JPEG'
@@ -496,8 +506,11 @@
         const heroControls = document.querySelector('.hero-controls');
         const heroProgress = document.querySelector('.hero-progress');
 
-        if (heroSlides && HERO_IMAGES.length) {
-            const slides = HERO_IMAGES.slice(0, 2).map((src, index) => {
+        function initializeHero(images) {
+            if (!heroSlides || !images.length) return;
+
+            heroSlides.replaceChildren();
+            const slides = images.slice(0, 2).map((src, index) => {
                 const image = document.createElement('img');
                 image.className = 'hero-slide' + (index === 0 ? ' is-active' : '');
                 image.src = src;
@@ -510,12 +523,12 @@
             let activeSlideIndex = 0;
             let heroTimer;
 
-            if (HERO_IMAGES.length > 1) {
+            if (images.length > 1) {
                 function showImage(index) {
-                    currentImageIndex = (index + HERO_IMAGES.length) % HERO_IMAGES.length;
+                    currentImageIndex = (index + images.length) % images.length;
                     const nextSlideIndex = 1 - activeSlideIndex;
                     const nextSlide = slides[nextSlideIndex];
-                    nextSlide.src = HERO_IMAGES[currentImageIndex];
+                    nextSlide.src = images[currentImageIndex];
 
                     requestAnimationFrame(() => {
                         nextSlide.classList.add('is-active');
@@ -527,21 +540,45 @@
 
                 function startHeroTimer() {
                     window.clearInterval(heroTimer);
-                    heroProgress.classList.remove('is-running');
-                    void heroProgress.offsetWidth;
-                    heroProgress.classList.add('is-running');
+                    if (heroProgress) {
+                        heroProgress.classList.remove('is-running');
+                        void heroProgress.offsetWidth;
+                        heroProgress.classList.add('is-running');
+                    }
                     heroTimer = window.setInterval(() => showImage(currentImageIndex + 1), 8000);
-                 }
+                }
 
-                heroControls.hidden = false;
-                heroControls.querySelectorAll('[data-hero-step]').forEach(button => {
-                    button.addEventListener('click', () => {
-                        showImage(currentImageIndex + Number(button.dataset.heroStep));
+                if (heroControls) {
+                    heroControls.hidden = false;
+                    heroControls.querySelectorAll('[data-hero-step]').forEach(button => {
+                        button.addEventListener('click', () => {
+                            showImage(currentImageIndex + Number(button.dataset.heroStep));
+                        });
                     });
-                });
+                }
                 startHeroTimer();
+            } else if (heroControls) {
+                heroControls.hidden = true;
             }
         }
+
+        async function loadHeroImages() {
+            try {
+                const apiUrl = new URL('backend/api/hero_kepek.php', window.location.href).toString();
+                const response = await fetch(apiUrl, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Hálózati hiba: ' + response.status);
+                const images = await response.json();
+                if (!Array.isArray(images) || !images.every(image => typeof image === 'string')) {
+                    throw new Error('Hibás válasz a szervertől');
+                }
+                initializeHero(images.length ? images : DEFAULT_HERO_IMAGES);
+            } catch (error) {
+                console.error('A hero képek betöltése nem sikerült.', error);
+                initializeHero(DEFAULT_HERO_IMAGES);
+            }
+        }
+
+        loadHeroImages();
 
         /* ---- NAVIGÁCIÓ / SZEKCIÓVÁLTÁS ---- */
         const navButtons = document.querySelectorAll('.nav-btn');
@@ -615,6 +652,91 @@
             '</svg>'
         );
 
+        const cookieIslandGrid = document.getElementById('cookie-island-grid');
+        let categoryImageUrls = {};
+
+        function openProductCategory(category) {
+            if (productSearch) productSearch.value = '';
+
+            const categoryButton = Array.from(document.querySelectorAll('.cat-btn'))
+                .find(button => button.dataset.cat === category);
+
+            if (categoryButton) {
+                categoryButton.click();
+            } else {
+                renderProducts('all');
+            }
+
+            const productsNavButton = Array.from(document.querySelectorAll('.nav-btn'))
+                .find(button => button.dataset.target === 'products');
+
+            switchTo('products', productsNavButton || null);
+        }
+
+        function renderCookieIsland() {
+            if (!cookieIslandGrid) return;
+
+            const productsByCategory = new Map();
+            allProducts.forEach(product => {
+                if (!product.kategoria) return;
+                if (!productsByCategory.has(product.kategoria)) {
+                    productsByCategory.set(product.kategoria, product);
+                }
+            });
+
+            const categories = Array.from(catButtons)
+                .map(button => button.dataset.cat)
+                .filter(category => category && category !== 'all');
+            if (!categories.length) {
+                cookieIslandGrid.innerHTML = '<p class="empty-text">Jelenleg nincs megjeleníthető kategória.</p>';
+                return;
+            }
+
+            cookieIslandGrid.innerHTML = categories.map((category, index) => {
+                const product = productsByCategory.get(category);
+                return `
+                <button class="cookie-island-card category-island-card" type="button"
+                        data-category="${escapeHtml(category)}"
+                        style="--card-index:${index}"
+                        aria-label="${escapeHtml(category)} termékeinek megnyitása">
+                    <span class="cookie-island-image">
+                        <img src="${escapeHtml(categoryImageUrls[category] || product?.image_url || PLACEHOLDER)}"
+                             alt=""
+                             loading="lazy"
+                             onerror="this.onerror=null;this.src='${PLACEHOLDER}';">
+                        <span class="product-watermark" aria-hidden="true">Füsti Cukrászda</span>
+                    </span>
+                    <span class="cookie-island-card-body">
+                        <span class="cookie-island-category">Kategória</span>
+                        <span class="cookie-island-title">${escapeHtml(category)}</span>
+                        <span class="cookie-island-link">Termékek megtekintése →</span>
+                    </span>
+                </button>
+            `;
+            }).join('');
+
+            cookieIslandGrid.querySelectorAll('.cookie-island-card').forEach(card => {
+                card.addEventListener('click', () => openProductCategory(card.dataset.category));
+            });
+        }
+
+        async function loadCategoryImages() {
+            try {
+                const apiUrl = new URL('backend/api/kategoriakepek.php', window.location.href).toString();
+                const response = await fetch(apiUrl, { cache: 'no-store' });
+                if (!response.ok) throw new Error('Hálózati hiba: ' + response.status);
+                const images = await response.json();
+                if (!images || typeof images !== 'object' || Array.isArray(images)) {
+                    throw new Error('Hibás válasz a szervertől');
+                }
+
+                categoryImageUrls = images;
+                renderCookieIsland();
+            } catch (error) {
+                console.error('A kategóriaképek betöltése nem sikerült.', error);
+            }
+        }
+
         async function loadProducts() {
             if (!productsGrid) return;
             try {
@@ -628,8 +750,12 @@
                 }
 
                 renderProducts('all');
+                renderCookieIsland();
             } catch (err) {
                 productsGrid.innerHTML = '<p class="empty-text">Nem sikerült betölteni a termékeket.</p>';
+                if (cookieIslandGrid) {
+                    renderCookieIsland();
+                }
                 console.error(err);
             }
         }
@@ -761,7 +887,9 @@
             });
         }
 
+        renderCookieIsland();
         loadProducts();
+        loadCategoryImages();
         loadCurrentOffer();
     </script>
 </body>
